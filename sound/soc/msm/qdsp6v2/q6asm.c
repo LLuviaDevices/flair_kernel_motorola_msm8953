@@ -480,10 +480,12 @@ static void q6asm_session_free(struct audio_client *ac)
 	ac->priv = NULL;
 
 	spin_lock_irqsave(&ac->no_wait_que_spinlock, flags);
-	list_for_each_safe(ptr, next, &ac->no_wait_que) {
-		node = list_entry(ptr, struct asm_no_wait_node, list);
-		list_del(&node->list);
-		kfree(node);
+	if (ac->no_wait_que.prev && ac->no_wait_que.next) {
+		list_for_each_safe(ptr, next, &ac->no_wait_que) {
+			node = list_entry(ptr, struct asm_no_wait_node, list);
+			list_del(&node->list);
+			kfree(node);
+		}
 	}
 	spin_unlock_irqrestore(&ac->no_wait_que_spinlock, flags);
 
@@ -1419,7 +1421,7 @@ static int32_t q6asm_srvc_callback(struct apr_client_data *data, void *priv)
 	uint32_t i = IN;
 	uint32_t *payload;
 	unsigned long dsp_flags;
-	unsigned long flags;
+	unsigned long flags = 0;
 	struct asm_buffer_node *buf_node = NULL;
 	struct list_head *ptr, *next;
 
