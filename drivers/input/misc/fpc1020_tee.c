@@ -495,7 +495,7 @@ static int fpc1020_probe(struct spi_device *spi)
 	fpc1020->clocks_enabled = 0;
 	fpc1020->clocks_suspended = 0;
 	fpc1020->key_enable = 0;
-	irqf = IRQF_TRIGGER_RISING | IRQF_ONESHOT | IRQF_PERF_CRITICAL;
+	irqf = IRQF_TRIGGER_RISING | IRQF_ONESHOT;
 
 	rc = devm_request_threaded_irq(dev, gpio_to_irq(fpc1020->irq_gpio),
 			NULL, fpc1020_irq_handler, irqf,
