@@ -1751,7 +1751,9 @@ composite_setup(struct usb_gadget *gadget, const struct usb_ctrlrequest *ctrl)
 		if (!f)
 			break;
 		if (w_value && !f->set_alt)
-			break;
+		
+                spin_lock(&cdev->lock);
+	break;
 		/*
 		 * We put interfaces in default settings (alt 0)
 		 * upon set config#1. Call set_alt for non-zero
@@ -1770,7 +1772,8 @@ composite_setup(struct usb_gadget *gadget, const struct usb_ctrlrequest *ctrl)
 			DBG(cdev, "delayed_status count %d\n",
 					cdev->delayed_status);
 		}
-		break;
+		spin_unlock(&cdev->lock);
+                break;
 	case USB_REQ_GET_INTERFACE:
 		if (ctrl->bRequestType != (USB_DIR_IN|USB_RECIP_INTERFACE))
 			goto unknown;
